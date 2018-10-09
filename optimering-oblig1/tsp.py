@@ -22,6 +22,11 @@ def randomAlgorithm(graph):
     tour.append(startingNode)
 
     while (len(tour) < len(graph)):
+        if (len(tour) - len(graph) < 100):
+            for index, node in enumerate(visited):
+                if (not node):
+                    tour.append(index)
+            break
         nextNode = random.randint(0,len(graph) -1)
         if (visited[nextNode]):
             continue
@@ -109,11 +114,11 @@ def greedyImprovement(initialTour, graph, numberOfTries):
 def greedyRandomImprovement(initialTour, graph, maxTries, poa):
     bestTour = numpy.array(initialTour, copy=True)
     bestCost = calculateCost(bestTour, graph)
+    oldTour = numpy.array(initialTour, copy=True)
+    oldCost = calculateCost(oldTour, graph)
 
     while (poa > 0.000001):
-        oldTour = numpy.array(initialTour, copy=True)
-        oldCost = calculateCost(oldTour, graph)
-
+        
         for i in range(maxTries):
             newTour = numpy.array(oldTour, copy=True)
             index1 = random.randint(0, len(initialTour) - 1)

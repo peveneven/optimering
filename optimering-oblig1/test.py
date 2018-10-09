@@ -1,7 +1,10 @@
 import numpy
 import random
+import time
+import matplotlib.pyplot as plot
 
 import tsp
+
 
 def makeGraph(numberOfCities, graph):
 
@@ -11,29 +14,34 @@ def makeGraph(numberOfCities, graph):
                 distance = -1
                 graph[i][j] = distance
             else:
-                distance = random.randint(1, 10)
+                distance = random.randint(1,10)
                 graph[i][j] = distance
                 graph[j][i] = distance
 
-numberOfCities = 1000
-graph = numpy.zeros((numberOfCities,numberOfCities), dtype = 'int32')
 
+numberOfCities = 10
+graph = numpy.zeros((numberOfCities,numberOfCities), dtype = 'int32')
 makeGraph(numberOfCities, graph)
 
+start = time.time()
 randTour = tsp.randomAlgorithm(graph)
-iterTour = tsp.iterativeRandom(graph, 10)
-greedyTour = tsp.greedyMethod(graph)
+end = time.time()
+#iterTour = tsp.iterativeRandom(graph, 10)
+#greedyTour = tsp.greedyMethod(graph)
 
-""" randImpr = tsp.greedyImprovement(randTour, graph, 5000)
-iterImpr = tsp.greedyImprovement(iterTour, graph, 5000)
-greedImpr = tsp.greedyImprovement(greedyTour, graph, 5000) """
+print('Time random: ', end-start)
 
-randImpr = tsp.greedyRandomImprovement(randTour, graph, 100, 0.9)
+""" greegy improvement """
+#randImpr = tsp.greedyImprovement(randTour, graph, 5000)
+#iterImpr = tsp.greedyImprovement(iterTour, graph, 5000)
+#greedImpr = tsp.greedyImprovement(greedyTour, graph, 5000)
+
+""" greegy random improvement """
+#randImpr = tsp.greedyRandomImprovement(randTour, graph, 100, 0.9)
 
 print('Cost rand:', tsp.calculateCost(randTour, graph))
-print('Cost rand Impro:', tsp.calculateCost(randImpr, graph))
-""" print('Cost iter:', tsp.calculateCost(iterTour, graph))
-print('Cost iter impro:', tsp.calculateCost(iterImpr, graph))
-print('Cost greed:', tsp.calculateCost(greedyTour, graph))
-print('Cost greed impro:', tsp.calculateCost(greedImpr, graph))
- """
+#print('Cost rand Impro:', tsp.calculateCost(randImpr, graph))
+#print('Cost iter:', tsp.calculateCost(iterTour, graph))
+#print('Cost iter impro:', tsp.calculateCost(iterImpr, graph))
+#print('Cost greed:', tsp.calculateCost(greedyTour, graph))
+#print('Cost greed impro:', tsp.calculateCost(greedImpr, graph))
