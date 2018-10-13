@@ -22,11 +22,11 @@ def randomAlgorithm(graph):
     tour.append(startingNode)
 
     while (len(tour) < len(graph)):
-        if (len(tour) - len(graph) < 100):
+        """ if (len(tour) - len(graph) < 100):
             for index, node in enumerate(visited):
                 if (not node):
                     tour.append(index)
-            break
+            break """
         nextNode = random.randint(0,len(graph) -1)
         if (visited[nextNode]):
             continue

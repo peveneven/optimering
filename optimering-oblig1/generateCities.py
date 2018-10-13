@@ -1,26 +1,38 @@
 import random
 import numpy
 import csv
+import coordinate
 
-def makeGraph(numberOfCities, graph):
+def makeGraph(numberOfCities, coordinates):
 
     for i in range(numberOfCities):
-        for j in range(i, numberOfCities):
+        x = random.randint(1, 1000)
+        y = random.randint(1, 1000)
+
+        nCoordinate = coordinate.Coordinate(x=x, y=y)
+        coordinates.append(nCoordinate)
+        """ for j in range(i, numberOfCities):
             if i == j:
                 distance = -1
                 graph[i][j] = distance
             else:
                 distance = random.randint(1,10)
                 graph[i][j] = distance
-                graph[j][i] = distance
+                graph[j][i] = distance """
 
 
-numberOfCities = 10
-graph = numpy.zeros((numberOfCities,numberOfCities), dtype = 'int32')
-makeGraph(numberOfCities, graph)
+numberOfCities = 1000
+coordinates = []
+makeGraph(numberOfCities, coordinates)
+print (coordinates)
 
-with open('cities.csv', 'wb') as f:
-    writer = csv.writer(f, delimiter=',')
+with open('cities_1000.csv', 'w',newline='') as csvfile:
+    writer = csv.writer(
+        csvfile, 
+        delimiter=','
+    )
     for i in range(numberOfCities):
-        for j in range(numberOfCities):
-            writer.writerow([graph[i][j]])
+        row = [coordinates[i].x, coordinates[i].y]
+        writer.writerow(row)
+    
+    csvfile.close()
