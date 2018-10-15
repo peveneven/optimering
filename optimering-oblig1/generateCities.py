@@ -2,37 +2,56 @@ import random
 import numpy
 import csv
 import coordinate
+import math
 
-def makeGraph(numberOfCities, coordinates):
+def generateCoordinates(numberOfCities, coordinates):
 
     for i in range(numberOfCities):
-        x = random.randint(1, 1000)
-        y = random.randint(1, 1000)
+        x = random.randint(1, 10000)
+        y = random.randint(1, 10000)
 
         nCoordinate = coordinate.Coordinate(x=x, y=y)
         coordinates.append(nCoordinate)
-        """ for j in range(i, numberOfCities):
+
+def calculateDistance(numberOfCities, graph, coordinates):
+    for i in range(numberOfCities):
+        for j in range(i, numberOfCities):
             if i == j:
                 distance = -1
                 graph[i][j] = distance
             else:
-                distance = random.randint(1,10)
+                deltaX = abs(coordinates[i].x - coordinates[j].x)
+                deltaY = abs(coordinates[i].y - coordinates[j].y)
+                distance = math.sqrt(math.pow(deltaX,2) + math.pow(deltaY, 2))
                 graph[i][j] = distance
-                graph[j][i] = distance """
+                graph[j][i] = distance
+            
 
 
-numberOfCities = 1000
-coordinates = []
-makeGraph(numberOfCities, coordinates)
-print (coordinates)
+citySize = [1000, 5000, 10000]
 
-with open('cities_1000.csv', 'w',newline='') as csvfile:
-    writer = csv.writer(
-        csvfile, 
-        delimiter=','
-    )
-    for i in range(numberOfCities):
-        row = [coordinates[i].x, coordinates[i].y]
-        writer.writerow(row)
+for size in citySize:
     
-    csvfile.close()
+    coordinates = []
+    generateCoordinates(size, coordinates)
+    distanceMatrix = numpy.zeros((size,size), dtype = 'int32')
+    calculateDistance(size, distanceMatrix, coordinates)
+
+    with open('./data/city_coordinates_' + str(size) + '.csv', 'w',newline='') as csvfile:
+        writer = csv.writer(
+            csvfile, 
+            delimiter=','
+        )
+        for i in range(size):
+            row = [coordinates[i].x, coordinates[i].y]
+            writer.writerow(row)
+
+        csvfile.close()
+
+    with open('./data/distance_' + str(size) + '.csv', 'w', newline='') as file:
+        writer = csv.writer(
+            file, 
+            delimiter=','
+        )
+        for row in distanceMatrix:
+            writer.writerow(row)
