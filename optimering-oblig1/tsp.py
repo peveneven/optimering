@@ -22,11 +22,11 @@ def randomAlgorithm(graph):
     tour.append(startingNode)
 
     while (len(tour) < len(graph)):
-        if (len(graph) - len(tour) < 100):
+        """if (len(graph) - len(tour) < 100):
             for index, node in enumerate(visited):
                 if (not node):
                     tour.append(index)
-            break
+            break"""
         nextNode = random.randint(0,len(graph) -1)
         if (visited[nextNode]):
             continue
@@ -93,19 +93,20 @@ def swapPlaces(tour, index1, index2):
 def greedyImprovement(initialTour, graph, numberOfTries):
     iterations = 0
     newTour = numpy.array(initialTour, copy=True)
+    oldCost = calculateCost(initialTour, graph)
 
     while (iterations < numberOfTries):
-        index1 = random.randint(0, len(initialTour) - 1)
-        index2 = random.randint(0, len(initialTour) - 1)
+        index1 = int((len(initialTour) - 1) * random.random())
+        index2 = int((len(initialTour) - 1) * random.random())
         currTour = numpy.array(newTour, copy=True)
         
         swapPlaces(currTour, index1, index2)
         
-        oldCost = calculateCost(newTour, graph)
         newCost = calculateCost(currTour, graph)
 
         if (newCost < oldCost):
             newTour = currTour
+            oldCost = newCost
         
         iterations += 1
 
@@ -117,23 +118,24 @@ def greedyRandomImprovement(initialTour, graph, maxTries, poa):
     oldTour = numpy.array(initialTour, copy=True)
     oldCost = calculateCost(oldTour, graph)
 
-    while (poa > 0.000001):
+    while (poa > 0.0000001):
         newTour = numpy.array(oldTour, copy=True)
+
         for i in range(maxTries):
-            index1 = random.randint(0, len(initialTour) - 1)
-            index2 = random.randint(0, len(initialTour) - 1)
+            index1 = int((len(initialTour) - 1) * random.random())
+            index2 = int((len(initialTour) - 1) * random.random())
 
             swapPlaces(newTour, index1, index2)
             newCost = calculateCost(newTour, graph)
 
-            if (newCost < oldCost):
+            if (newCost <= oldCost):
                 oldCost = newCost
                 oldTour = numpy.array(newTour, copy=True)
                 if (newCost < bestCost):
                     bestCost = newCost
                     bestTour = numpy.array(newTour, copy=True)
             else:
-                rnd = random.uniform(0,1)
+                rnd = random.uniform(0, 1)
                 
                 if (rnd < poa):
                     oldCost = newCost

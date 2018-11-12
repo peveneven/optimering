@@ -8,22 +8,32 @@ import math
 
 import tsp
 
-def plotTour(tour, x, y, nr):
-    fig = plot.figure(nr)
-    plot.scatter(x=x,y=y)
-    for index, line in enumerate(tour):
-        if (index == len(tour) - 1):
-            break
+numberOfCities = 1000
+x = numpy.zeros(numberOfCities, dtype='int32')
+y = numpy.zeros(numberOfCities, dtype='int32')
 
-        xs = [x[tour[index]], x[tour[index+1]]]
-        ys = [y[tour[index]], y[tour[index+1]]]
+def plotTour(*args):
+    fig, ax = plot.subplots(len(args))
 
-        if (index == 0):
-            plot.plot(xs, ys, '-k', c='red')
-        else:
-            plot.plot(xs, ys, '-k')
+    for index, tour in enumerate(args):
+
+        ax[index].scatter(x=x,y=y)
+
+        for i, line in enumerate(tour):
+       
+            if (i == len(tour) - 1):
+                break
+
+            xs = [x[tour[i]], x[tour[i+1]]]
+            ys = [y[tour[i]], y[tour[i+1]]]
+
+            if (i == 0):
+                ax[index].plot(xs, ys, '-k', c='red')
+            else:
+                ax[index].plot(xs, ys, '-k')
+            
     
-    return fig
+    return fig, ax
 
 
 def makeGraph(numberOfCities, graph, x, y):
@@ -36,21 +46,14 @@ def makeGraph(numberOfCities, graph, x, y):
 
         csvFile.close()
     
-    start = time.time()
     with open('./data/distance_' + str(numberOfCities) + '.csv', 'r') as csvFile:
         reader = csv.reader(csvFile, delimiter = ',')
         for index, row in enumerate(reader):
             graph[index] = row
     csvFile.close()
-    end = time.time()
-    print(end-start)
-
-numberOfCities = 100
 
 
 distanceMatrix = numpy.zeros((numberOfCities,numberOfCities), dtype = 'int32')
-x = numpy.zeros(numberOfCities, dtype='int32')
-y = numpy.zeros(numberOfCities, dtype='int32')
 
 makeGraph(numberOfCities, distanceMatrix, x, y)
 
@@ -71,92 +74,111 @@ end = time.time()
 timeGreed = end-start
 
 
-
-fig1 = plotTour(randTour, x, y, 1)
-fig2 = plotTour(iterTour, x, y, 2)
-fig3 = plotTour(greedyTour, x, y, 3)
-
 """ greegy improvement """
 start = time.time()
-randImpr = tsp.greedyImprovement(randTour, distanceMatrix, 5000)
+randImpr = tsp.greedyImprovement(randTour, distanceMatrix, 100)
 end = time.time()
 timeRandImpr = end-start
 
 start = time.time()
-iterImpr = tsp.greedyImprovement(iterTour, distanceMatrix, 5000)
+iterImpr = tsp.greedyImprovement(iterTour, distanceMatrix, 100)
 end = time.time()
 timeIterImpr = end-start
 
 start = time.time()
-greedImpr = tsp.greedyImprovement(greedyTour, distanceMatrix, 5000)
+greedImpr = tsp.greedyImprovement(greedyTour, distanceMatrix, 100)
 end = time.time()
 timeGreedImpr = end-start
 
 
 
 """ greegy random improvement """
-#randImpr = tsp.greedyRandomImprovement(randTour, distanceMatrix, 500, 0.9)
-#iterImpr = tsp.greedyRandomImprovement(iterTour, distanceMatrix, 500, 0.9)
-#greedImpr = tsp.greedyRandomImprovement(greedyTour, distanceMatrix, 500, 0.9)
+start = time.time()
+randGreedRandImpr = tsp.greedyRandomImprovement(randTour, distanceMatrix, 100, 0.9)
+end = time.time()
+timeRandGrImpr = end-start
 
-fig4 = plotTour(randImpr, x, y, 4)
-fig5 = plotTour(iterImpr, x, y, 5)
-fig6 = plotTour(greedImpr, x, y, 6)
+start = time.time()
+iterGreedRandImpr = tsp.greedyRandomImprovement(iterTour, distanceMatrix, 100, 0.9)
+end = time.time()
+timeIterGrImpr = end-start
 
-fig1.suptitle(
-    'Cost random: ' + 
+start = time.time()
+greedGreedRandImpr = tsp.greedyRandomImprovement(greedyTour, distanceMatrix, 100, 0.9)
+end = time.time()
+timeGreedGrImpr = end-start
+
+fig1, ax1 = plotTour(randTour, randImpr, randGreedRandImpr)
+fig2, ax2 = plotTour(iterTour, iterImpr, iterGreedRandImpr)
+fig3, ax3 = plotTour(greedyTour, greedImpr, greedGreedRandImpr)
+
+""" Set titles """
+ax1[0].set_title(
+    'Random cost: ' +
     str(tsp.calculateCost(randTour, distanceMatrix)) +
-    ', Time: ' +
-    str(timeRand) 
+    ' Time: ' +
+    str(timeRand)
 )
 
-fig2.suptitle(
-    'Cost iterative random: ' + 
+ax1[1].set_title(
+    'Greedy cost: ' +
+    str(tsp.calculateCost(randImpr, distanceMatrix)) +
+    ' Time: ' +
+    str(timeRandImpr)
+)
+
+ax1[2].set_title(
+    'Greedy random cost: ' +
+    str(tsp.calculateCost(randGreedRandImpr, distanceMatrix)) +
+    ' Time: ' +
+    str(timeRandGrImpr)
+)
+
+ax2[0].set_title(
+    'Iterative Random cost: ' +
     str(tsp.calculateCost(iterTour, distanceMatrix)) +
-    ', Time: ' +
+    ' Time: ' +
     str(timeIter)
 )
 
-fig3.suptitle(
-    'Cost greedy: ' + 
-    str(tsp.calculateCost(greedyTour, distanceMatrix)) +
-    ', Time: ' +
-    str(timeGreed)
-)
-
-fig4.suptitle(
-    'Cost random: ' + 
-    str(tsp.calculateCost(randImpr, distanceMatrix)) +
-    ', Time: ' +
-    str(timeRandImpr) 
-)
-
-fig5.suptitle(
-    'Cost iterative random: ' + 
+ax2[1].set_title(
+    'Greedy cost: ' +
     str(tsp.calculateCost(iterImpr, distanceMatrix)) +
-    ', Time: ' +
+    ' Time: ' +
     str(timeIterImpr)
 )
 
-fig6.suptitle(
-    'Cost greedy: ' + 
+ax2[2].set_title(
+    'Greedy Random cost: ' +
+    str(tsp.calculateCost(iterGreedRandImpr, distanceMatrix)) +
+    ' Time: ' +
+    str(timeIterGrImpr)
+)
+
+ax3[0].set_title(
+    'Greedy cost: ' +
+    str(tsp.calculateCost(greedyTour, distanceMatrix)) +
+    ' Time: ' +
+    str(timeGreed)
+)
+
+ax3[1].set_title(
+    'Greedy impr cost: ' +
     str(tsp.calculateCost(greedImpr, distanceMatrix)) +
-    ', Time: ' +
+    ' Time: ' +
     str(timeGreedImpr)
+)
+
+ax3[2].set_title(
+    'Greedy Random impr cost: ' +
+    str(tsp.calculateCost(greedGreedRandImpr, distanceMatrix)) +
+    ' Time: ' +
+    str(timeGreedGrImpr)
 )
 
 fig1.show()
 fig2.show()
 fig3.show()
-fig4.show()
-fig5.show()
-fig6.show()
+
 plot.show()
 
-
-#print('Cost rand:', tsp.calculateCost(randTour, graph))
-#print('Cost rand Impro:', tsp.calculateCost(randImpr, graph))
-#print('Cost iter:', tsp.calculateCost(iterTour, graph))
-#print('Cost iter impro:', tsp.calculateCost(iterImpr, graph))
-#print('Cost greed:', tsp.calculateCost(greedyTour, graph))
-#print('Cost greed impro:', tsp.calculateCost(greedImpr, graph))

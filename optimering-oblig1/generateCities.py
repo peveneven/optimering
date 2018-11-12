@@ -22,13 +22,14 @@ def calculateDistance(numberOfCities, graph, coordinates):
             else:
                 deltaX = abs(coordinates[i].x - coordinates[j].x)
                 deltaY = abs(coordinates[i].y - coordinates[j].y)
-                distance = math.sqrt(math.pow(deltaX,2) + math.pow(deltaY, 2))
+                distance = math.sqrt(math.pow(deltaX, 2) + math.pow(deltaY, 2))
                 graph[i][j] = distance
                 graph[j][i] = distance
             
 
 
-citySize = [1000, 5000, 10000]
+#citySize = [1000, 5000, 10000]
+citySize = [100]
 
 for size in citySize:
     
